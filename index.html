@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Graduations</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="opening-screen" id="opening-screen">
+            <div class="logo-container">
+                <div class="logo"></div>
+            </div>
+            <button class="btn-open" id="openBtn">Open Card</button>
+        </div>
+
+        <div class="card" id="card">
+            <div class="card-content">
+                <div class="genre-badge">Sarjana Perikanan</div>
+                <h1 class="card-title">Happy Graduation!</h1>
+                <div class="card-image"></div>
+                <div class="card-message">
+                    <p>🎓<strong>Mutiara Ainayah Suryaning Kawoso, S.Pi</strong>🩺</p>
+                    <p>Happy Graduation Sayang❤️</p>
+                    <p>Semoga ilmu yang telah diraih menjadi bekal berharga untuk berkontribusi nyata dalam menjaga dan mengembangkan sumber daya kelautan dan perikanan Indonesia.</p>
+                    <p>- Your Bf</p>
+                    </div>
+            </div>
+        </div>
+        
+        <!-- Hidden audio element -->
+        <audio class="hidden-audio" id="bgMusic" loop>
+            <source src="iris.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        
+        <!-- Fallback play button -->
+        <button class="play-music-btn" id="playMusicBtn">Tap to Play Music</button>
+    </div>
+
+    <script>
+        // Initialize audio context for mobile devices
+        function initAudio() {
+            // Create audio context
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioContext = new AudioContext();
+            
+            // Resume audio context on user interaction
+            document.body.addEventListener('click', function resumeAudio() {
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                document.body.removeEventListener('click', resumeAudio);
+            }, { once: true });
+        }
+        
+        // Call initialization
+        initAudio();
+        
+        // Handle card opening
+        document.getElementById('openBtn').addEventListener('click', function() {
+            // Hide opening screen
+            document.getElementById('opening-screen').style.display = 'none';
+            
+            // Show card with animation
+            document.getElementById('card').classList.add('active');
+            
+            // Create confetti effect
+            createConfetti();
+            
+            // Change background
+            document.body.style.backgroundColor = '#F8E3B0';
+            
+            // Try to play audio
+            playAudio();
+        });
+        
+        // Play audio function with fallback
+        function playAudio() {
+            const audio = document.getElementById('bgMusic');
+            audio.volume = 1;
+            
+            // Try to play automatically
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    // Show manual play button if autoplay fails
+                    document.getElementById('playMusicBtn').style.display = 'block';
+                });
+            }
+        }
+        
+        // Manual play button handler
+        document.getElementById('playMusicBtn').addEventListener('click', function() {
+            const audio = document.getElementById('bgMusic');
+            audio.play();
+            this.style.display = 'none';
+        });
+        
+        // Confetti animation function
+        function createConfetti() {
+            const colors = ['#FFD966', '#C72D2D', '#0E2A47', '#FFFFFF'];
+            const container = document.querySelector('.container');
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Random properties
+                const size = Math.random() * 10 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const posX = Math.random() * window.innerWidth;
+                const delay = Math.random() * 3;
+                const duration = Math.random() * 2 + 1.5;
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${posX}px`;
+                confetti.style.top = `-10px`;
+                confetti.style.animation = `confettiFall ${duration}s ease ${delay}s forwards`;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                container.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+    </script>
+</body>
+</html>
